@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Northwind Supply — Everyday gear, sensibly priced</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="logo" href="index.html"><span class="logo-mark">N</span> Northwind Supply</a>
+        <nav class="site-nav">
+          <a href="index.html" aria-current="page">Shop</a>
+          <a href="pricing.html">Plans</a>
+          <a href="billing.html">Billing</a>
+          <a href="dashboard.html">Account</a>
+        </nav>
+        <a class="cart" href="dashboard.html">
+          Cart <span class="cart-count" data-cart-count>0</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <div>
+          <h1>Everyday gear, built to be used.</h1>
+          <p>
+            Desks, bags and small tools for people who work from anywhere. Free shipping over
+            $60, thirty-day returns, no subscription required.
+          </p>
+          <p style="margin-top: 18px">
+            <a class="btn btn-primary" href="pricing.html">See plans</a>
+            <a class="btn" href="signup.html" style="margin-left: 8px">Create account</a>
+          </p>
+        </div>
+        <div class="hero-badge">
+          <strong>4.8 / 5</strong>
+          from 2,140 verified buyers
+        </div>
+      </section>
+
+      <h2 class="section">Popular this week</h2>
+
+      <div class="product-grid">
+        <article class="product">
+          <div class="product-art">🧰</div>
+          <div class="product-body">
+            <h3>Field Tool Roll</h3>
+            <p>Waxed canvas, eight pockets, rolls down to the size of a water bottle.</p>
+            <div class="price">$42.00</div>
+            <button class="btn btn-primary btn-block" data-add-to-cart="Field Tool Roll">
+              Add to cart
+            </button>
+          </div>
+        </article>
+
+        <article class="product">
+          <div class="product-art">🪑</div>
+          <div class="product-body">
+            <h3>Standing Desk Mat</h3>
+            <p>18 mm recycled rubber. Stays put on hardwood, kind to bare feet.</p>
+            <div class="price">$58.00</div>
+            <button class="btn btn-primary btn-block" data-add-to-cart="Standing Desk Mat">
+              Add to cart
+            </button>
+          </div>
+        </article>
+
+        <article class="product">
+          <div class="product-art">🎒</div>
+          <div class="product-body">
+            <h3>Weekender Pack</h3>
+            <p>26 L, laptop sleeve, and a top pocket that opens flat at security.</p>
+            <div class="price">$96.00</div>
+            <button class="btn btn-primary btn-block" data-add-to-cart="Weekender Pack">
+              Add to cart
+            </button>
+          </div>
+        </article>
+
+        <article class="product">
+          <div class="product-art">🔌</div>
+          <div class="product-body">
+            <h3>Travel Power Brick</h3>
+            <p>65 W USB-C, swappable plugs for four regions, cabin-approved.</p>
+            <div class="price">$39.00</div>
+            <button class="btn btn-primary btn-block" data-add-to-cart="Travel Power Brick">
+              Add to cart
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span>Orders shipped</span><strong>184,300</strong></div>
+        <div class="stat"><span>Average rating</span><strong>4.8</strong></div>
+        <div class="stat"><span>Return window</span><strong>30 days</strong></div>
+        <div class="stat"><span>Support reply</span><strong>&lt; 4h</strong></div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      © <span data-year>2026</span> Northwind Supply — a demo storefront for Handover.
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

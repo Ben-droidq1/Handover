@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your account — Northwind Supply</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="logo" href="index.html"><span class="logo-mark">N</span> Northwind Supply</a>
+        <nav class="site-nav">
+          <a href="index.html">Shop</a>
+          <a href="pricing.html">Plans</a>
+          <a href="billing.html">Billing</a>
+          <a href="dashboard.html" aria-current="page">Account</a>
+        </nav>
+        <a class="cart" href="dashboard.html">
+          Cart <span class="cart-count" data-cart-count>0</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="toolbar">
+        <div>
+          <h1 style="font-size: 26px; letter-spacing: -0.025em; margin: 0">Welcome back</h1>
+          <p style="color: #65758b; margin: 4px 0 0">
+            Signed in as <strong data-account-email>you@example.com</strong>
+          </p>
+        </div>
+        <a class="btn" href="billing.html">Billing &amp; invoices</a>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span>Orders</span><strong>3</strong></div>
+        <div class="stat"><span>Open shipments</span><strong>1</strong></div>
+        <div class="stat"><span>Plan</span><strong>Workshop</strong></div>
+        <div class="stat"><span>Member since</span><strong>2024</strong></div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin: 0 0 12px; font-size: 17px">Recent orders</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Placed</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>NW-10428</td>
+              <td>2 Nov 2026</td>
+              <td>Field Tool Roll, Travel Power Brick</td>
+              <td>$81.00</td>
+              <td>In transit</td>
+            </tr>
+            <tr>
+              <td>NW-10391</td>
+              <td>17 Oct 2026</td>
+              <td>Weekender Pack</td>
+              <td>$96.00</td>
+              <td>Delivered</td>
+            </tr>
+            <tr>
+              <td>NW-10302</td>
+              <td>4 Sep 2026</td>
+              <td>Standing Desk Mat</td>
+              <td>$58.00</td>
+              <td>Delivered</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="margin-top: 18px">
+        <h2 style="margin: 0 0 12px; font-size: 17px">Saved address</h2>
+        <p style="margin: 0; color: #65758b">
+          Alex Rivera<br />
+          14 Harbour Lane, Unit 3<br />
+          Bristol BS1 4RN<br />
+          United Kingdom
+        </p>
+      </div>
+    </main>
+
+    <footer class="footer">
+      © <span data-year>2026</span> Northwind Supply — a demo storefront for Handover.
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

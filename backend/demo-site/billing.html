@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Billing &amp; invoices — Northwind Supply</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="logo" href="index.html"><span class="logo-mark">N</span> Northwind Supply</a>
+        <nav class="site-nav">
+          <a href="index.html">Shop</a>
+          <a href="pricing.html">Plans</a>
+          <a href="billing.html" aria-current="page">Billing</a>
+          <a href="dashboard.html">Account</a>
+        </nav>
+        <a class="cart" href="dashboard.html">
+          Cart <span class="cart-count" data-cart-count>0</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="toolbar">
+        <div>
+          <h1 style="font-size: 26px; letter-spacing: -0.025em; margin: 0">Billing</h1>
+          <p style="color: #65758b; margin: 4px 0 0">Workshop plan · next charge 1 Dec 2026</p>
+        </div>
+        <span class="btn" style="cursor: default">Visa ending 4242</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span>This month</span><strong>$12.00</strong></div>
+        <div class="stat"><span>Year to date</span><strong>$132.00</strong></div>
+        <div class="stat"><span>Invoices</span><strong>12</strong></div>
+      </div>
+
+      <div class="card">
+        <div class="toolbar" style="margin-bottom: 12px">
+          <h2 style="margin: 0; font-size: 17px">Invoice history</h2>
+          <button class="btn btn-primary" id="download-invoice" type="button">
+            Download invoice
+          </button>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Period</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>INV-2026-011</td><td>1 Nov 2026</td><td>$12.00</td><td>Paid</td></tr>
+            <tr><td>INV-2026-010</td><td>1 Oct 2026</td><td>$12.00</td><td>Paid</td></tr>
+            <tr><td>INV-2026-009</td><td>1 Sep 2026</td><td>$12.00</td><td>Paid</td></tr>
+            <tr><td>INV-2026-008</td><td>1 Aug 2026</td><td>$12.00</td><td>Paid</td></tr>
+          </tbody>
+        </table>
+
+        <p class="hint" style="margin: 14px 0 0">
+          Invoices are issued on the first of each month and kept for seven years.
+        </p>
+      </div>
+    </main>
+
+    <footer class="footer">
+      © <span data-year>2026</span> Northwind Supply — a demo storefront for Handover.
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

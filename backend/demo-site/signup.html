@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create your account — Northwind Supply</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="logo" href="index.html"><span class="logo-mark">N</span> Northwind Supply</a>
+        <nav class="site-nav">
+          <a href="index.html">Shop</a>
+          <a href="pricing.html">Plans</a>
+          <a href="billing.html">Billing</a>
+          <a href="dashboard.html">Account</a>
+        </nav>
+        <a class="cart" href="dashboard.html">
+          Cart <span class="cart-count" data-cart-count>0</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="page">
+      <div class="card form-card">
+        <h1>Create your account</h1>
+        <p class="sub">Order tracking, saved addresses and invoice history in one place.</p>
+
+        <p class="error" id="signup-error" hidden></p>
+
+        <form id="signup-form" novalidate>
+          <div class="field">
+            <label for="email">Email address</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" />
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="new-password" />
+            <span class="hint">At least 8 characters. This is a demo — nothing is stored.</span>
+          </div>
+
+          <button class="btn btn-primary btn-block" type="submit">Create account</button>
+        </form>
+
+        <p class="hint" style="margin-top: 16px">
+          Already have an account? <a href="dashboard.html">Sign in instead</a>.
+        </p>
+      </div>
+    </main>
+
+    <footer class="footer">
+      © <span data-year>2026</span> Northwind Supply — a demo storefront for Handover.
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

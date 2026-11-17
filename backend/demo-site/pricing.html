@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plans &amp; pricing — Northwind Supply</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="logo" href="index.html"><span class="logo-mark">N</span> Northwind Supply</a>
+        <nav class="site-nav">
+          <a href="index.html">Shop</a>
+          <a href="pricing.html" aria-current="page">Plans</a>
+          <a href="billing.html">Billing</a>
+          <a href="dashboard.html">Account</a>
+        </nav>
+        <a class="cart" href="dashboard.html">
+          Cart <span class="cart-count" data-cart-count>0</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="page">
+      <h1 style="font-size: 30px; letter-spacing: -0.025em; margin: 0 0 6px">Plans</h1>
+      <p style="color: #65758b; margin: 0 0 24px">
+        Households order once. Workshops order weekly. Pick whichever fits.
+      </p>
+
+      <div class="plans">
+        <section class="plan">
+          <h3>Personal</h3>
+          <div class="amount">$0 <span>/ month</span></div>
+          <ul>
+            <li>Standard shipping</li>
+            <li>30-day returns</li>
+            <li>Email support</li>
+          </ul>
+          <a class="btn btn-block" href="signup.html">Start for free</a>
+        </section>
+
+        <section class="plan featured">
+          <h3>Workshop</h3>
+          <div class="amount">$12 <span>/ month</span></div>
+          <ul>
+            <li>Free shipping on every order</li>
+            <li>Priority support, under 4 hours</li>
+            <li>Invoice history and CSV export</li>
+          </ul>
+          <a class="btn btn-primary btn-block" href="signup.html">Choose Workshop</a>
+        </section>
+
+        <section class="plan">
+          <h3>Studio</h3>
+          <div class="amount">$29 <span>/ month</span></div>
+          <ul>
+            <li>Everything in Workshop</li>
+            <li>Consolidated monthly invoicing</li>
+            <li>Named account manager</li>
+          </ul>
+          <a class="btn btn-block" href="signup.html">Talk to us</a>
+        </section>
+      </div>
+
+      <div class="card" style="margin-top: 26px">
+        <h2 style="margin: 0 0 10px; font-size: 17px">What is included in every plan</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Personal</th>
+              <th>Workshop</th>
+              <th>Studio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Shipping</td><td>Standard</td><td>Free</td><td>Free, next day</td></tr>
+            <tr><td>Returns</td><td>30 days</td><td>60 days</td><td>90 days</td></tr>
+            <tr><td>Invoices</td><td>Email only</td><td>Downloadable PDF</td><td>Downloadable PDF</td></tr>
+            <tr><td>Support</td><td>Email</td><td>Priority</td><td>Named manager</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <footer class="footer">
+      © <span data-year>2026</span> Northwind Supply — a demo storefront for Handover.
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

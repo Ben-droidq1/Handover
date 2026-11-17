@@ -1,0 +1,20 @@
+node_modules/
+dist/
+
+# Runtime data: SQLite database, evidence packs, screenshots, Kane logs.
+backend/data/
+
+# Local configuration and secrets.
+.env
+.env.local
+*.local
+
+# Logs and OS noise
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
