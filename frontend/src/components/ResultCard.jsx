@@ -2,9 +2,31 @@ import { formatDuration } from '../lib/format'
 import { Screenshot } from './Screenshot'
 import { StatusPill } from './ui'
 
+/** Never claim a finished check is still "waiting to start". */
+function leadLine(result) {
+  if (result.oneLiner) return result.oneLiner
+  switch (result.status) {
+    case 'queued':
+      return 'Waiting to start…'
+    case 'running':
+      return 'Kane is checking this in Chrome now…'
+    case 'passed':
+      return 'This criterion passed.'
+    case 'failed':
+      return 'This criterion did not pass.'
+    case 'timeout':
+      return 'This check ran out of time.'
+    case 'error':
+      return 'This check could not be completed.'
+    default:
+      return ''
+  }
+}
+
 export function ResultCard({ result, index, variant = 'owner' }) {
   const failed = result.status === 'failed' || result.status === 'error' || result.status === 'timeout'
   const showDetails = variant === 'owner' && result.status !== 'queued'
+  const lead = leadLine(result)
 
   return (
     <article className={`result ${variant} ${failed ? 'is-failed' : ''}`} data-status={result.status}>
@@ -19,9 +41,7 @@ export function ResultCard({ result, index, variant = 'owner' }) {
           <StatusPill status={result.status} />
         </header>
 
-        <p className={`result-oneliner ${failed ? 'is-failed' : ''}`}>
-          {result.oneLiner || 'Waiting to start…'}
-        </p>
+        {lead ? <p className={`result-oneliner ${failed ? 'is-failed' : ''}`}>{lead}</p> : null}
 
         {result.errorMessage ? (
           <div className="note note-bad result-error">

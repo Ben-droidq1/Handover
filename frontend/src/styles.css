@@ -1456,12 +1456,21 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 16 / 10;
+  min-height: 104px;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
   padding: 12px;
   text-align: center;
+  background: repeating-linear-gradient(
+    -45deg,
+    #fbfcfe,
+    #fbfcfe 8px,
+    #f4f6fa 8px,
+    #f4f6fa 16px
+  );
+  border-style: dashed;
+  cursor: default;
 }
 
 .lightbox {
