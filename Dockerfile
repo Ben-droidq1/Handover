@@ -14,7 +14,8 @@ FROM node:22-bookworm-slim AS runtime
 
 ENV NODE_ENV=production \
     PORT=3001 \
-    DATA_DIR=/data
+    DATA_DIR=/data \
+    KANE_CLI_CHROME_PATH=/usr/bin/google-chrome-stable
 
 # Chrome and its shared libraries. Kane drives a real Chrome, so the image
 # needs the browser, not just the CLI.

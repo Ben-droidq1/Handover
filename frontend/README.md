@@ -48,8 +48,10 @@ The Vite dev server proxies `/api` and `/demo` to `http://localhost:3001`.
 | `/runs/:id` | owner | Live progress while running, then per-criterion evidence |
 | `/r/:token` | client | Public report: screenshots, pass/fail, approve delivery |
 
-Owner writes are gated by a password sent as `X-Owner-Password`. The UI asks once and
-stores it in `localStorage`. Client report pages never need it.
+Owner writes can be gated by an optional shared password sent as `X-Owner-Password`
+(`OWNER_PASSWORD` in the backend env). It is empty by default, so the app works with no accounts
+at all; if you set one, the UI asks for it the first time a write is rejected. Client report pages
+never need it.
 
 ## API contract
 

@@ -1,7 +1,5 @@
 import { isMockMode } from '../api/client'
-import { openOwnerDialog, useOwnerPassword } from '../api/auth'
 import { Link, useLocation } from '../router'
-import { IconLock } from './ui'
 
 export function BrandMark({ size = 26 }) {
   return (
@@ -27,7 +25,6 @@ export function BrandMark({ size = 26 }) {
 
 export function Header() {
   const path = useLocation()
-  const hasPassword = Boolean(useOwnerPassword())
 
   return (
     <header className="topbar">
@@ -48,10 +45,6 @@ export function Header() {
 
         <div className="topbar-actions">
           {isMockMode ? <span className="pill pill-muted pill-sm">Demo data</span> : null}
-          <button type="button" className="btn btn-ghost btn-sm" onClick={() => openOwnerDialog()}>
-            <IconLock width={14} height={14} />
-            {hasPassword ? 'Owner' : 'Sign in'}
-          </button>
           <Link to="/new" className="btn btn-primary btn-sm">
             New project
           </Link>

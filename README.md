@@ -17,7 +17,8 @@ freelancer ── criteria ──▶ Handover ── Kane CLI ──▶ Chrome �
 
 ## What is in the box
 
-- **Owner view** — projects, criteria editor, run history, live progress, re-run.
+- **Owner view** — projects, criteria editor, run history, live progress, re-run. **No accounts, no sign-up:
+  open the URL and start.** An optional shared `OWNER_PASSWORD` can lock writes on a public deployment.
 - **Client report** — per-criterion verdicts, step-by-step log, last-step screenshot, run history,
   sign-off with name and note. No account required, the URL token is the only key.
 - **Runner** — up to 3 Chrome sessions in parallel, per-check timeouts, graceful handling of
@@ -172,7 +173,8 @@ Handover/
 
 Built for a short build, deliberately small:
 
-- One owner, one password. No user accounts, teams, billing or email.
+- No accounts. There is one optional shared password (`OWNER_PASSWORD`) to protect writes if you host it
+  publicly; leave it empty and anyone with the URL can create projects, which is the intended demo mode.
 - The client link is shareable; anyone with it can approve, which matches how a handover email
   works. Sign-offs are idempotent per run.
 - Screenshots come from the last step of a criterion; the full pack is archived but not browsable.
