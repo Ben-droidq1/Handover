@@ -1,21 +1,36 @@
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
+import { homedir } from 'node:os'
 import { config } from './config.js'
 import { resolveKane } from './kane.js'
 
+// Mirrors Kane CLI's own search order so /api/health tells the truth about the
+// browser Kane will actually pick (including Chrome for Testing and kane-chrome).
 const CHROME_PATHS = {
   win32: [
     'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
     'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
     `${process.env.LOCALAPPDATA || ''}\\Google\\Chrome\\Application\\chrome.exe`,
+    'C:\\chrome-for-testing\\chrome-win64\\chrome.exe',
+    `${process.env.LOCALAPPDATA || ''}\\chrome-for-testing\\chrome-win64\\chrome.exe`,
+    `${process.env.LOCALAPPDATA || ''}\\kane-chrome\\chrome.exe`,
   ],
-  darwin: ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'],
+  darwin: [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    `${homedir()}/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`,
+    '/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+    `${homedir()}/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`,
+    '/Applications/Chromium.app/Contents/MacOS/Chromium',
+  ],
   linux: [
     '/usr/bin/google-chrome',
     '/usr/bin/google-chrome-stable',
+    '/usr/bin/google-chrome-for-testing',
+    '/usr/local/bin/google-chrome-for-testing',
+    `${homedir()}/chrome-for-testing/chrome-linux64/chrome`,
     '/usr/bin/chromium',
     '/usr/bin/chromium-browser',
-    '/opt/google/chrome/chrome',
+    '/snap/bin/chromium',
   ],
 }
 
@@ -61,6 +76,9 @@ function runText(command, args, timeoutMs, shell = false) {
 }
 
 function probeChrome() {
+  const override = process.env.KANE_CLI_CHROME_PATH?.trim()
+  if (override) return { available: fs.existsSync(override), path: override }
+
   const candidates = CHROME_PATHS[process.platform] ?? []
   const found = candidates.find((candidate) => candidate && fs.existsSync(candidate))
   return { available: Boolean(found), path: found ?? null }
