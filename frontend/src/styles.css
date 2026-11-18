@@ -818,6 +818,8 @@ img {
 }
 
 .new-card {
+  display: flex;
+  flex-direction: column;
   border-style: dashed;
   border-color: var(--line-strong);
   background: transparent;

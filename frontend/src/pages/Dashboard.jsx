@@ -17,7 +17,11 @@ function Stats({ projects }) {
   const passed = withRuns.reduce((sum, project) => sum + project.lastRun.passed, 0)
   const total = withRuns.reduce((sum, project) => sum + project.lastRun.total, 0)
   const awaiting = projects.filter(
-    (project) => project.lastRun && !project.signedOff && project.lastRun.status !== 'running',
+    (project) =>
+      project.lastRun &&
+      !project.signedOff &&
+      project.lastRun.total > 0 &&
+      project.lastRun.passed === project.lastRun.total,
   ).length
 
   return (
