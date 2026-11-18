@@ -4,7 +4,7 @@ import { ApproveBox } from '../components/ApproveBox'
 import { BrandMark } from '../components/Header'
 import { ResultCard } from '../components/ResultCard'
 import { EmptyState, ErrorNote, ScoreRing, Skeleton, StatusPill } from '../components/ui'
-import { formatDate, formatDateTime, passRate, plural } from '../lib/format'
+import { formatDate, formatDateTime, passRate, plural, runDisplayStatus } from '../lib/format'
 import { useAsync } from '../lib/useAsync'
 
 function ReportTopbar() {
@@ -58,6 +58,20 @@ export default function PublicReport({ token }) {
   const issues = failed + broken
   const passed = results.filter((result) => result.status === 'passed').length
 
+  const verdictTitle =
+    issues === 0
+      ? 'Every criterion passed in a real browser'
+      : failed > 0
+        ? `${failed} ${plural(failed, 'criterion', 'criteria')} failed in the browser${broken ? ` · ${broken} could not run` : ''}`
+        : `${broken} ${plural(broken, 'criterion', 'criteria')} could not be checked`
+
+  const verdictBody =
+    issues === 0
+      ? 'Each check below was performed by Kane CLI in Chrome, with screenshots captured at the final step.'
+      : failed > 0
+        ? 'Each failed check includes a screenshot of where Kane stopped and the reason. Approve only if what remains is acceptable for this handover.'
+        : 'Kane could not start these checks — usually Chrome or the Kane login. The report explains what to fix; they can be run again without changing the site.'
+
   return (
     <div className="report">
       <ReportTopbar />
@@ -91,16 +105,8 @@ export default function PublicReport({ token }) {
                 {issues ? '!' : '✓'}
               </span>
               <div>
-                <strong>
-                  {issues === 0
-                    ? 'Every criterion passed in a real browser'
-                    : `${issues} ${plural(issues, 'criterion', 'criteria')} did not pass`}
-                </strong>
-                <p>
-                  {issues === 0
-                    ? 'Each check below was performed by Kane CLI in Chrome, with screenshots captured at the final step.'
-                    : 'The failing checks include the screenshot and the reason Kane stopped. Approve only if these are acceptable for this handover.'}
-                </p>
+                <strong>{verdictTitle}</strong>
+                <p>{verdictBody}</p>
               </div>
               {run.status === 'running' ? <StatusPill status="running" /> : null}
             </div>
@@ -149,7 +155,7 @@ export default function PublicReport({ token }) {
                             {index === 0 ? <span className="pill pill-muted pill-sm current-tag">current</span> : null}
                           </td>
                           <td>
-                            <StatusPill status={entry.status} size="sm" />
+                            <StatusPill status={runDisplayStatus(entry)} size="sm" />
                           </td>
                           <td>
                             {entry.passed}/{entry.total}

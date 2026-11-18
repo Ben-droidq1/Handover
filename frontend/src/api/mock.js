@@ -210,7 +210,8 @@ function summary(runId) {
   const rows = results.filter((r) => r.runId === runId)
   const passed = rows.filter((r) => r.status === 'passed').length
   const failed = rows.filter((r) => r.status === 'failed' || r.status === 'error' || r.status === 'timeout').length
-  return { passed, failed, total: rows.length }
+  const broken = rows.filter((r) => r.status === 'error' || r.status === 'timeout').length
+  return { passed, failed, broken, total: rows.length }
 }
 
 function signoffFor(runId) {

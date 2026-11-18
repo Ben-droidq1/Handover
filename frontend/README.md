@@ -85,7 +85,7 @@ type ProjectSummary = {
   signedOff: boolean
   lastRun: null | {
     id: string; status: Status; startedAt: string; finishedAt: string | null
-    passed: number; failed: number; total: number
+    passed: number; failed: number; broken: number; total: number
   }
 }
 
@@ -108,7 +108,8 @@ type Result = {
 
 `error` means Kane could not run the check (missing Chrome, not logged in, timeout); it is
 shown differently from a real `failed` assertion so the freelancer knows whether to fix the
-site or their environment.
+site or their environment. Runs store only `passed`/`failed`, so `failed` and `broken` are
+counted side by side: a run whose failures are all `broken` is presented as "Couldn't run".
 
 ## Layout
 

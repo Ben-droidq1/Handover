@@ -1,7 +1,7 @@
 import { api } from '../api/client'
 import { ResultCard } from '../components/ResultCard'
 import { PassBar, Skeleton, Spinner, StatusPill } from '../components/ui'
-import { formatDateTime, formatDuration, isRunActive } from '../lib/format'
+import { formatDateTime, formatDuration, isRunActive, runDisplayStatus } from '../lib/format'
 import { useAsync } from '../lib/useAsync'
 import { Link, navigate } from '../router'
 import { useState } from 'react'
@@ -79,8 +79,14 @@ export default function RunDetail({ id }) {
             Run · {formatDateTime(run.startedAt)}
           </p>
           <h1 className="run-title">
-            {active ? 'Checking the delivery' : passed === results.length ? 'Every check passed' : 'Some checks need attention'}
-            <StatusPill status={run.status} />
+            {active
+              ? 'Checking the delivery'
+              : passed === results.length
+                ? 'Every check passed'
+                : failed > 0
+                  ? 'Some checks need attention'
+                  : 'Kane could not run these checks'}
+            <StatusPill status={runDisplayStatus({ status: run.status, failed: failed + broken, broken })} />
           </h1>
           <p className="lede">
             {active

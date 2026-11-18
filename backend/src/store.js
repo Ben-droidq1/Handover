@@ -29,6 +29,7 @@ function mapSummary(row) {
           finishedAt: row.run_finished_at,
           passed: row.passed,
           failed: row.failed,
+          broken: row.broken,
           total: row.total,
         }
       : null,
@@ -64,6 +65,7 @@ const SUMMARY_SQL = `
     r.id AS run_id, r.status AS run_status, r.started_at AS run_started_at, r.finished_at AS run_finished_at,
     (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id AND x.status = 'passed') AS passed,
     (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id AND x.status IN ('failed','error','timeout')) AS failed,
+    (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id AND x.status IN ('error','timeout')) AS broken,
     (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id) AS total,
     s.id AS signoff_id
   FROM projects p
@@ -98,6 +100,7 @@ export function getProjectDetail(id) {
       `SELECT r.id, r.status, r.started_at, r.finished_at,
         (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id AND x.status = 'passed') AS passed,
         (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id AND x.status IN ('failed','error','timeout')) AS failed,
+        (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id AND x.status IN ('error','timeout')) AS broken,
         (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id) AS total,
         s.approved_by, s.created_at AS signoff_at
       FROM runs r
@@ -114,6 +117,7 @@ export function getProjectDetail(id) {
       finishedAt: run.finished_at,
       passed: run.passed,
       failed: run.failed,
+      broken: run.broken,
       total: run.total,
       signoff: run.approved_by ? { approvedBy: run.approved_by, createdAt: run.signoff_at } : null,
     }))
@@ -363,6 +367,7 @@ export function getPublicReport(token) {
       `SELECT r.id, r.status, r.started_at, r.finished_at,
         (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id AND x.status = 'passed') AS passed,
         (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id AND x.status IN ('failed','error','timeout')) AS failed,
+        (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id AND x.status IN ('error','timeout')) AS broken,
         (SELECT COUNT(*) FROM results x WHERE x.run_id = r.id) AS total,
         s.approved_by, s.created_at AS signoff_at
        FROM runs r
@@ -379,6 +384,7 @@ export function getPublicReport(token) {
       finishedAt: run.finished_at,
       passed: run.passed,
       failed: run.failed,
+      broken: run.broken,
       total: run.total,
       signoff: run.approved_by ? { approvedBy: run.approved_by, createdAt: run.signoff_at } : null,
     }))

@@ -1,7 +1,7 @@
 import { api } from '../api/client'
 import { Link } from '../router'
 import { useAsync } from '../lib/useAsync'
-import { initializeLabel, passRate, plural, relativeTime } from '../lib/format'
+import { initializeLabel, passRate, plural, relativeTime, runDisplayStatus } from '../lib/format'
 import { EmptyState, ErrorNote, PassBar, Skeleton, StatusPill } from '../components/ui'
 
 function hostOf(url) {
@@ -68,7 +68,7 @@ function ProjectCard({ project }) {
       <div className="project-run">
         {run ? (
           <>
-            <StatusPill status={run.status} size="sm" />
+            <StatusPill status={runDisplayStatus(run)} size="sm" />
             <span className={perfect ? 'ok-text' : ''}>
               {run.passed}/{run.total} passed
             </span>

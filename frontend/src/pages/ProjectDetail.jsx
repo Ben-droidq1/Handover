@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { api, clientReportUrl } from '../api/client'
 import { CriterionEditor } from '../components/CriterionEditor'
 import { IconCopy, IconExternal, PassBar, ScoreRing, Skeleton, Spinner, StatusPill } from '../components/ui'
-import { formatDateTime, isRunActive, passRate, plural, relativeTime } from '../lib/format'
+import { formatDateTime, isRunActive, passRate, plural, relativeTime, runDisplayStatus } from '../lib/format'
 import { useAsync } from '../lib/useAsync'
 import { Link, navigate } from '../router'
 
@@ -183,7 +183,7 @@ export default function ProjectDetail({ id }) {
                 {project.runs.map((run) => (
                   <li key={run.id}>
                     <Link to={`/runs/${run.id}`} className="run-row">
-                      <StatusPill status={run.status} size="sm" />
+                      <StatusPill status={runDisplayStatus(run)} size="sm" />
                       <span className="run-when">{formatDateTime(run.startedAt)}</span>
                       <span className="run-ratio">
                         {run.passed}/{run.total} passed
@@ -212,10 +212,12 @@ export default function ProjectDetail({ id }) {
                 <div className="rail-ring">
                   <ScoreRing passed={lastRun.passed} total={lastRun.total} size={92} />
                   <div className="stack gap-8">
-                    <StatusPill status={lastRun.status} />
+                    <StatusPill status={runDisplayStatus(lastRun)} />
                     <p className="muted small">
                       {lastRun.failed
-                        ? `${lastRun.failed} ${plural(lastRun.failed, 'check')} needs attention before the client sees it.`
+                        ? lastRun.broken >= lastRun.failed
+                          ? `${lastRun.failed} ${plural(lastRun.failed, 'check')} could not run. Nothing on the site is at fault; the report explains the fix.`
+                          : `${lastRun.failed} ${plural(lastRun.failed, 'check')} ${lastRun.failed === 1 ? 'needs' : 'need'} attention before the client sees it.`
                         : 'Everything your client asked for is proven.'}
                     </p>
                   </div>

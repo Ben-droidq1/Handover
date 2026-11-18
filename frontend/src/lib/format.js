@@ -59,6 +59,19 @@ export function isRunActive(run) {
   return run?.status === 'queued' || run?.status === 'running'
 }
 
+/**
+ * A stored run is only passed or failed, but "failed" hides two very different
+ * stories: the delivered site really is broken, or Kane never got to look at it
+ * (Chrome missing, CLI not logged in). Only the first is the freelancer's fault,
+ * so runs made up entirely of error/timeout results read as "couldn't run".
+ */
+export function runDisplayStatus(run) {
+  if (!run || run.status !== 'failed') return run?.status
+  const broken = run.broken ?? 0
+  const failed = run.failed ?? 0
+  return failed > 0 && failed === broken ? 'error' : run.status
+}
+
 export function isFinished(status) {
   return status === 'passed' || status === 'failed' || status === 'error' || status === 'timeout'
 }
