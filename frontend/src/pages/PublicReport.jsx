@@ -128,6 +128,7 @@ export default function PublicReport({ token }) {
               token={token}
               signoff={currentSignoff}
               failureCount={issues}
+              brokenCount={broken}
               onApproved={(next) => setSignoff(next)}
             />
 

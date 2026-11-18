@@ -3,7 +3,7 @@ import { api } from '../api/client'
 import { formatDateTime, plural } from '../lib/format'
 import { IconCheck, Spinner } from './ui'
 
-export function ApproveBox({ token, signoff, failureCount = 0, onApproved }) {
+export function ApproveBox({ token, signoff, failureCount = 0, brokenCount = 0, onApproved }) {
   const [name, setName] = useState('')
   const [note, setNote] = useState('')
   const [accepted, setAccepted] = useState(false)
@@ -47,9 +47,11 @@ export function ApproveBox({ token, signoff, failureCount = 0, onApproved }) {
     <section className="signoff">
       <h3>Approve this delivery</h3>
       <p className="muted">
-        {failureCount > 0
-          ? `${failureCount} ${plural(failureCount, 'check')} did not pass. You can still approve and note what follows up.`
-          : 'Every check passed. Sign off to close the handover.'}
+        {failureCount === 0
+          ? 'Every check passed. Sign off to close the handover.'
+          : brokenCount >= failureCount
+            ? `${failureCount} ${plural(failureCount, 'check')} could not run. You can still approve and note what follows up.`
+            : `${failureCount} ${plural(failureCount, 'check')} did not pass. You can still approve and note what follows up.`}
       </p>
 
       <form onSubmit={submit} className="signoff-form">
@@ -78,7 +80,7 @@ export function ApproveBox({ token, signoff, failureCount = 0, onApproved }) {
         {failureCount > 0 ? (
           <label className="check">
             <input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} />
-            <span>I accept the outstanding {plural(failureCount, 'check')}</span>
+            <span>I accept the {brokenCount >= failureCount ? 'unverified' : 'outstanding'} {plural(failureCount, 'check')}</span>
           </label>
         ) : null}
 
