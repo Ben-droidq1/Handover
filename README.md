@@ -50,7 +50,10 @@ kane-cli login --oauth          # or: kane-cli login --username <user> --access-
 kane-cli whoami                 # should show your identity, not "Not logged in"
 
 # 2. Install Chrome if you do not have it
-#    macOS: https://www.google.com/chrome/  ·  Windows/macOS: regular installer
+#    macOS/Windows: https://www.google.com/chrome/
+#    No admin rights? Chrome for Testing works too: Kane also looks at
+#    %LOCALAPPDATA%\kane-chrome\chrome.exe (Windows) or ~/chrome-for-testing,
+#    and KANE_CLI_CHROME_PATH can point at any Chromium binary.
 ```
 
 ```bash
