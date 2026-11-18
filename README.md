@@ -1,5 +1,7 @@
 # Handover
 
+[![docker](https://github.com/Ben-droidq1/Handover/actions/workflows/docker.yml/badge.svg)](https://github.com/Ben-droidq1/Handover/actions/workflows/docker.yml)
+
 **Proof of delivery for freelance work.** A freelancer pastes the site URL and the acceptance
 criteria in plain English. [Kane CLI](https://kanecli.com) opens a real Chrome browser and
 performs each criterion like a user would. The client gets a link to a quiet, readable report
@@ -150,11 +152,14 @@ docker build -t handover .
 docker run --rm -p 3001:3001 -v handover-data:/data -v handover-home:/home/node handover
 ```
 
-The image contains Kane CLI and Chrome. Real runs still need a logged-in Kane profile, so mount
-`/home/node` (or copy `~/.kane` / the CLI config in) after running `kane-cli login` on the host.
-Chrome inside containers may need `--shm-size=1g`; if it refuses to start under the default
-sandbox, add `--no-sandbox` to the Chrome launch (see Kane CLI's browser options) or run the app
-on the host, which is the supported path for the demo.
+The image contains Kane CLI and Chrome, and CI builds it on every push plus a smoke test that
+checks the SPA, the deep links, the demo site, and that Kane and Chrome are present
+(`.github/workflows/docker.yml`).
+
+Real runs still need a logged-in Kane profile, so mount `/home/node` (or copy `~/.kane` / the CLI
+config in) after running `kane-cli login` on the host. Chrome inside containers may need
+`--shm-size=1g`; Kane already passes `--no-sandbox` on Linux. If you would rather not install
+Docker Desktop locally, run the app on the host, which is the supported path for the demo.
 
 ## Layout
 
