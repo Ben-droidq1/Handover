@@ -1,0 +1,54 @@
+name: docker
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build the image
+        run: docker build -t handover:ci .
+
+      - name: Run the container and smoke test it
+        run: |
+          set -euo pipefail
+          docker run -d --name handover -p 3001:3001 handover:ci
+
+          for _ in $(seq 1 30); do
+            if curl -fsS http://localhost:3001/api/health -o /tmp/health.json; then break; fi
+            sleep 2
+          done
+          cat /tmp/health.json
+
+          # The SPA, its deep links, and the demo site must all be served.
+          curl -fsS http://localhost:3001/ | grep -q 'id="root"'
+          curl -fsS http://localhost:3001/r/any-token | grep -q 'id="root"'
+          curl -fsS http://localhost:3001/demo/ | grep -q 'Northwind Supply'
+          curl -fsS http://localhost:3001/demo/billing.html | grep -q 'download-invoice'
+
+          # Kane CLI and Chrome must be present inside the image; login is a
+          # per-user concern, so loggedIn is allowed to be false here.
+          node -e "
+            const health = require('/tmp/health.json');
+            const problems = [];
+            if (!health.kane.available) problems.push('Kane CLI not installed');
+            if (health.kane.version !== '0.10.5') problems.push('unexpected Kane version: ' + health.kane.version);
+            if (!health.chrome.available) problems.push('Chrome not found');
+            if (problems.length) { console.error(problems.join('; ')); process.exit(1); }
+            console.log('image contains Kane CLI', health.kane.version, 'and Chrome at', health.chrome.path);
+          "
+
+          docker logs handover | tail -20
+
+      - name: Container logs
+        if: failure()
+        run: docker logs handover || true
