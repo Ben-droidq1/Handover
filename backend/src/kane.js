@@ -121,12 +121,17 @@ function extractSteps(events) {
   return [...steps.values()].sort((a, b) => a.n - b.n).slice(0, MAX_STEPS)
 }
 
-function stderrHint(stderr) {
+// kane-cli prints this before every run, whether or not anything is wrong.
+// It is a notice, not a reason a run failed, so never report it as the reason.
+const STDERR_NOISE = /bundled node runtime not found|running on system node/i
+
+export function stderrHint(stderr) {
   const lines = stderr
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter(Boolean)
+    .filter((line) => line && !STDERR_NOISE.test(line))
   const interesting =
+    lines.find((line) => /not authenticated|not logged in|login --oauth/i.test(line)) ??
     lines.find((line) => /error|chrome|login|auth|missing|not found|cannot|failed/i.test(line)) ??
     lines.at(-1)
   return interesting ? interesting.slice(0, 400) : ''

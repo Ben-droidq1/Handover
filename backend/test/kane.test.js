@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { classifyOutcome, parseNdjsonLine } from '../src/kane.js'
+import { classifyOutcome, parseNdjsonLine, stderrHint } from '../src/kane.js'
 
 const base = { timeoutSec: 180, command: 'node' }
 
@@ -104,4 +104,20 @@ test('an unknown exit code with no detail still reports the code', () => {
   const outcome = classifyOutcome({ ...base, code: 7 })
   assert.equal(outcome.status, 'error')
   assert.match(outcome.errorMessage, /code 7/)
+})
+
+test('the bundled-runtime notice is never reported as the reason a run failed', () => {
+  const hint = stderrHint(
+    [
+      'kane-cli: bundled Node runtime not found (runtime package missing) - running on system node 22.23.5',
+      'Not authenticated. Run: kane-cli login --oauth, or kane-cli login --username <user> --access-key <key>',
+    ].join('\n'),
+  )
+  assert.match(hint, /Not authenticated/)
+  assert.doesNotMatch(hint, /bundled Node runtime/)
+})
+
+test('stderrHint falls back to the last line when nothing looks like an error', () => {
+  assert.equal(stderrHint('one\ntwo\nthree'), 'three')
+  assert.equal(stderrHint(''), '')
 })
