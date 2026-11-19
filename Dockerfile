@@ -15,18 +15,14 @@ FROM node:22-bookworm-slim AS runtime
 ENV NODE_ENV=production \
     PORT=3001 \
     DATA_DIR=/data \
-    KANE_CLI_CHROME_PATH=/usr/bin/google-chrome-stable
+    KANE_CLI_CHROME_PATH=/usr/bin/chromium
 
-# Chrome and its shared libraries. Kane drives a real Chrome, so the image
-# needs the browser, not just the CLI.
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      ca-certificates wget gnupg \
-      fonts-liberation libasound2 libatk-bridge2.0-0 libatk1.0-0 libcups2 libdbus-1-3 \
-      libdrm2 libgbm1 libgtk-3-0 libnspr4 libnss3 libx11-xcb1 libxcomposite1 libxdamage1 \
-      libxfixes3 libxkbcommon0 libxrandr2 xdg-utils \
-    && wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    && apt-get install -y /tmp/chrome.deb \
-    && rm -f /tmp/chrome.deb \
+# Browser for Kane. Kane drives a real browser, so the image needs one, not just
+# the CLI. Debian's chromium comes from the same apt mirror as everything else,
+# which keeps the build reproducible; the Google-hosted .deb is flaky on some
+# networks (TLS to dl.google.com gets reset).
+RUN apt-get update -o Acquire::Retries=3 && apt-get install -y --no-install-recommends -o Acquire::Retries=3 \
+      chromium ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g @testmuai/kane-cli@0.10.5 --no-audit --no-fund

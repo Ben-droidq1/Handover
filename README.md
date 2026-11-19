@@ -142,7 +142,7 @@ first means the site is broken, the second means the environment is.
 ## Tests
 
 ```bash
-cd backend && npm test          # 27 tests: exit-code mapping, zip reader, validation
+cd backend && npm test          # 29 tests: exit-code mapping, zip reader, validation
 cd frontend && npm run smoke    # renders every page in Node to catch crashes
 ```
 
@@ -155,9 +155,11 @@ docker build -t handover .
 docker run --rm -p 3001:3001 -v handover-data:/data -v handover-home:/home/node handover
 ```
 
-The image contains Kane CLI and Chrome, and CI builds it on every push plus a smoke test that
-checks the SPA, the deep links, the demo site, and that Kane and Chrome are present
-(`.github/workflows/docker.yml`).
+The image contains Kane CLI and Chromium (Debian's package, picked up through
+`KANE_CLI_CHROME_PATH=/usr/bin/chromium`), and CI builds it on every push plus a smoke test that
+checks the SPA, the deep links, the demo site, and that Kane and the browser are present
+(`.github/workflows/docker.yml`). Chromium comes from the same apt mirror as the rest of the base
+image, so the build does not depend on downloading Google's `.deb` at build time.
 
 Real runs still need a logged-in Kane profile, so mount `/home/node` (or copy `~/.kane` / the CLI
 config in) after running `kane-cli login` on the host. Chrome inside containers may need
