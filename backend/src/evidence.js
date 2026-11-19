@@ -7,10 +7,13 @@ import { inflateRawSync } from 'node:zlib'
  *
  * A pack is a plain zip whose entries are flat (`run.yaml` at the root, no
  * wrapping folder). Screenshots live at
- *   tests/<test-id>/steps/<ordinal>-<step-id>/screenshot.png
- * We only need the last step's screenshot for the report, so the reader pulls
- * specific entries instead of extracting everything.
+ *   tests/<test-id>/steps/<ordinal>-<step-id>/screenshot.png|jpg
+ * (0.10.6 switched to .jpg) plus an optional annotated.png. We only need the
+ * last step's screenshot for the report, so the reader pulls specific entries
+ * instead of extracting everything.
  */
+
+const SCREENSHOT_RE = /^tests\/[^/]+\/steps\/[^/]+\/screenshot\.(png|jpe?g|webp)$/i
 
 const EOCD = 0x06054b50
 const CENTRAL = 0x02014b50
@@ -101,17 +104,18 @@ export async function collectEvidence({ evidenceFile, resultId, evidenceDir, sho
   try {
     const entries = readZipEntries(buffer)
     const shots = entries
-      .filter((entry) => /^tests\/[^/]+\/steps\/[^/]+\/screenshot\.png$/.test(entry.name))
+      .filter((entry) => SCREENSHOT_RE.test(entry.name))
       .sort((a, b) => stepOrdinal(a.name) - stepOrdinal(b.name))
 
     stepsFound = shots.length
 
     if (shots.length) {
       const last = shots[shots.length - 1]
-      const png = readZipEntry(buffer, last)
+      const bytes = readZipEntry(buffer, last)
       await fs.mkdir(shotsDir, { recursive: true })
-      const fileName = `${resultId}.png`
-      await fs.writeFile(path.join(shotsDir, fileName), png)
+      const ext = path.extname(last.name).toLowerCase() || '.png'
+      const fileName = `${resultId}${ext}`
+      await fs.writeFile(path.join(shotsDir, fileName), bytes)
       screenshotPath = fileName
     }
 

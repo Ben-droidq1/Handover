@@ -101,6 +101,11 @@ async function runOne(result, siteUrl) {
       objective: result.criterion_text,
       logPath,
       onEvent,
+      // Each concurrent check gets its own working dir and Chrome user-data-dir.
+      // Sharing either one makes parallel runs close each other's page
+      // ("TargetClosedError") because Kane keeps session state in the cwd.
+      workDir: path.join(paths.work, result.id),
+      profileDir: path.join(paths.work, result.id, 'chrome'),
     })
 
     const evidence = await collectEvidence({

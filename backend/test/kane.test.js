@@ -110,11 +110,13 @@ test('the bundled-runtime notice is never reported as the reason a run failed', 
   const hint = stderrHint(
     [
       'kane-cli: bundled Node runtime not found (runtime package missing) - running on system node 22.23.5',
+      'Running on: Desktop - Chrome',
+      'Skill update available: not installed -> 0.1.4 - run `kane-cli install skill`',
       'Not authenticated. Run: kane-cli login --oauth, or kane-cli login --username <user> --access-key <key>',
     ].join('\n'),
   )
   assert.match(hint, /Not authenticated/)
-  assert.doesNotMatch(hint, /bundled Node runtime/)
+  assert.doesNotMatch(hint, /bundled Node runtime|Running on:|Skill update/)
 })
 
 test('stderrHint falls back to the last line when nothing looks like an error', () => {

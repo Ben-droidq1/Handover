@@ -88,6 +88,34 @@ test('collectEvidence keeps the pack and extracts the last step screenshot', asy
   await fs.rm(dirs.root, { recursive: true, force: true })
 })
 
+test('collectEvidence extracts the last jpg screenshot used by kane-cli 0.10.6', async () => {
+  const dirs = await tempDirs()
+  const packPath = path.join(dirs.root, 'session.evidence')
+  await fs.writeFile(
+    packPath,
+    buildZip([
+      { name: 'run.yaml', data: 'status: failed\n' },
+      { name: 'tests/open-billing/steps/1-0-1/screenshot.jpg', data: Buffer.from('first-jpg') },
+      { name: 'tests/open-billing/steps/2-0-2/screenshot.jpg', data: Buffer.from('last-jpg') },
+      { name: 'tests/open-billing/steps/2-0-2/annotated.png', data: Buffer.from('annotation') },
+    ]),
+  )
+
+  const result = await collectEvidence({
+    evidenceFile: packPath,
+    resultId: 'res_jpg',
+    evidenceDir: dirs.evidenceDir,
+    shotsDir: dirs.shotsDir,
+  })
+
+  assert.equal(result.stepsFound, 2)
+  assert.equal(result.screenshotPath, 'res_jpg.jpg')
+  const shot = await fs.readFile(path.join(dirs.shotsDir, 'res_jpg.jpg'))
+  assert.equal(shot.toString('utf8'), 'last-jpg')
+
+  await fs.rm(dirs.root, { recursive: true, force: true })
+})
+
 test('collectEvidence handles a pack with no step screenshots', async () => {
   const dirs = await tempDirs()
   const packPath = path.join(dirs.root, 'empty.evidence')

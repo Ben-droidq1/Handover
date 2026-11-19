@@ -121,9 +121,10 @@ function extractSteps(events) {
   return [...steps.values()].sort((a, b) => a.n - b.n).slice(0, MAX_STEPS)
 }
 
-// kane-cli prints this before every run, whether or not anything is wrong.
-// It is a notice, not a reason a run failed, so never report it as the reason.
-const STDERR_NOISE = /bundled node runtime not found|running on system node/i
+// kane-cli prints these before every run, whether or not anything is wrong.
+// They are notices, not reasons a run failed, so never report them as one.
+const STDERR_NOISE =
+  /bundled node runtime not found|running on system node|^running on:|skill update available/i
 
 export function stderrHint(stderr) {
   const lines = stderr
@@ -223,6 +224,7 @@ export async function runCriterion({
   logPath = null,
   onEvent = null,
   workDir = paths.work,
+  profileDir = null,
 }) {
   const startedAt = Date.now()
   const kane = await resolveKane()
@@ -238,6 +240,13 @@ export async function runCriterion({
     '--max-steps',
     String(maxSteps),
   ]
+
+  // Every concurrent check needs its own Chrome user-data-dir. Sharing one makes
+  // the parallel browsers close each other's page ("TargetClosedError").
+  if (profileDir) {
+    await fs.mkdir(profileDir, { recursive: true })
+    args.push('--chrome-profile', profileDir)
+  }
 
   await fs.mkdir(workDir, { recursive: true })
   if (logPath) await fs.mkdir(path.dirname(logPath), { recursive: true })
