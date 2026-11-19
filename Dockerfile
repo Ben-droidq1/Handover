@@ -36,7 +36,10 @@ COPY backend/demo-site ./demo-site
 COPY --from=frontend --chown=node:node /build/frontend/dist /frontend/dist
 
 RUN mkdir -p /data && chown -R node:node /data /app
-USER node
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Starts as root so a root-owned disk mount can be handed to "node", then drops
+# privileges in the entrypoint (see docker-entrypoint.sh).
 ENV HOME=/home/node
 
 VOLUME ["/data"]
@@ -45,4 +48,4 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3001)+'/api/health').then(r=>process.exit(r.status===200?0:1)).catch(()=>process.exit(1))"
 
-CMD ["node", "src/index.js"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

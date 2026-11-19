@@ -1,0 +1,34 @@
+# Render blueprint: one Docker web service.
+#
+# Why Docker: the app shells out to Kane CLI, which drives a real Chromium. A
+# native Node service has neither, and the frontend is built inside the image.
+#
+# Persistent disk: SQLite, screenshots and evidence packs live under /data.
+# Disks require a paid instance type; on the free tier remove `disk:` and set
+# DATA_DIR to a path inside the container (data is then lost on every deploy).
+services:
+  - type: web
+    name: handover
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATA_DIR
+        value: /data
+      # Keeps Kane's ~/.testmuai profile (written by `kane-cli login`) on the
+      # disk so it survives restarts and deploys.
+      - key: HOME
+        value: /data/home
+      - key: KANE_CLI_CHROME_PATH
+        value: /usr/bin/chromium
+      # Kane's planning step alone took 1-2 minutes for a single criterion.
+      - key: KANE_TIMEOUT_SEC
+        value: "420"
+      - key: MAX_CONCURRENCY
+        value: "2"
+    disk:
+      name: handover-data
+      mountPath: /data
+      sizeGB: 1

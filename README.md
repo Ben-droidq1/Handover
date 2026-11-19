@@ -161,10 +161,42 @@ checks the SPA, the deep links, the demo site, and that Kane and the browser are
 (`.github/workflows/docker.yml`). Chromium comes from the same apt mirror as the rest of the base
 image, so the build does not depend on downloading Google's `.deb` at build time.
 
-Real runs still need a logged-in Kane profile, so mount `/home/node` (or copy `~/.kane` / the CLI
-config in) after running `kane-cli login` on the host. Chrome inside containers may need
-`--shm-size=1g`; Kane already passes `--no-sandbox` on Linux. If you would rather not install
+Real runs still need a logged-in Kane profile: mount a volume at `$HOME` (or copy
+`~/.testmuai/kaneai` in) after running `kane-cli login` on the host. Chrome inside containers may
+need `--shm-size=1g`; Kane already passes `--no-sandbox` on Linux. If you would rather not install
 Docker Desktop locally, run the app on the host, which is the supported path for the demo.
+
+The container starts as root only to take ownership of a root-owned disk mount, then drops to the
+unprivileged `node` user before starting the server (`docker-entrypoint.sh`).
+
+## Render
+
+`render.yaml` deploys the Docker image as a web service with a 1 GB disk at `/data`. Use the
+Blueprint flow (New → Blueprint → pick this repo); a native Node service will not work, because the
+app needs Kane CLI and Chromium, and the frontend is compiled inside the image.
+
+| Variable | Value | Why |
+| --- | --- | --- |
+| `DATA_DIR` | `/data` | SQLite, screenshots, evidence and logs live on the disk |
+| `HOME` | `/data/home` | Keeps Kane's `~/.testmuai` profile across deploys |
+| `KANE_CLI_CHROME_PATH` | `/usr/bin/chromium` | Browser baked into the image |
+| `KANE_TIMEOUT_SEC` | `420` | Kane spends 1–2 minutes planning before it acts |
+| `MAX_CONCURRENCY` | `2` | Three headless browsers need more RAM than small instances have |
+| `OWNER_PASSWORD` | optional | Locks project create/edit/run behind a password |
+
+`PORT` is injected by Render — never set it. Disks require a paid instance; on the free tier remove
+`disk:` and point `DATA_DIR` inside the container instead, accepting that data is lost on redeploy.
+
+OAuth cannot run in a headless container, so log Kane in from the Render Shell once:
+
+```bash
+kane-cli login --username <email> --access-key <key>
+```
+
+With `HOME=/data/home` the profile is written to the disk, and `/api/health` then reports
+`loggedIn: true`. Remember that the demo project's site URL must be the public
+`https://<service>.onrender.com/demo/`, not `localhost`.
+
 
 ## Layout
 
