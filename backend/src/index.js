@@ -6,6 +6,7 @@ import { db } from './db.js'
 import { asyncRoute } from './errors.js'
 import { getHealth } from './health.js'
 import { killActiveRuns } from './kane.js'
+import { ensureKaneLogin } from './login.js'
 import { publicRouter } from './routes/public.js'
 import { projectsRouter } from './routes/projects.js'
 import { runsRouter } from './routes/runs.js'
@@ -89,6 +90,19 @@ const server = app.listen(config.port, () => {
   if (!fs.existsSync(path.join(config.frontendDist, 'index.html'))) {
     console.log('[handover] frontend/dist not found — use the Vite dev server on :5173')
   }
+
+  // Runs after the port is open so the platform's health check can connect
+  // while Kane logs in. Failure is reported, never fatal.
+  ensureKaneLogin()
+    .then((result) => {
+      if (result.alreadyLoggedIn) console.log('[kane] already logged in')
+      else if (result.attempted && result.ok) console.log('[kane] logged in from KANE_USERNAME/KANE_ACCESS_KEY')
+      else if (result.attempted) console.warn(`[kane] login from env failed: ${result.reason}`)
+      else if (!config.kaneUsername || !config.kaneAccessKey) {
+        console.log('[kane] no KANE_USERNAME/KANE_ACCESS_KEY set; using the existing CLI profile')
+      }
+    })
+    .catch((error) => console.warn(`[kane] login from env failed: ${error.message}`))
 })
 
 function shutdown(signal) {

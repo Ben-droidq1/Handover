@@ -182,12 +182,16 @@ app needs Kane CLI and Chromium, and the frontend is compiled inside the image.
 | `KANE_CLI_CHROME_PATH` | `/usr/bin/chromium` | Browser baked into the image |
 | `KANE_TIMEOUT_SEC` | `420` | Kane spends 1–2 minutes planning before it acts |
 | `MAX_CONCURRENCY` | `2` | Three headless browsers need more RAM than small instances have |
+| `KANE_USERNAME` | your Kane email | Optional: lets the container log Kane in by itself |
+| `KANE_ACCESS_KEY` | your access key | Optional: paired with `KANE_USERNAME` |
 | `OWNER_PASSWORD` | optional | Locks project create/edit/run behind a password |
 
 `PORT` is injected by Render — never set it. Disks require a paid instance; on the free tier remove
 `disk:` and point `DATA_DIR` inside the container instead, accepting that data is lost on redeploy.
 
-OAuth cannot run in a headless container, so log Kane in from the Render Shell once:
+OAuth cannot run in a headless container. Set `KANE_USERNAME` + `KANE_ACCESS_KEY` in the dashboard and
+the server logs in on boot (`/api/health` shows `limits.loginFromEnv: true`); no shell needed. If you
+prefer not to store the key, run this once in the Render Shell instead:
 
 ```bash
 kane-cli login --username <email> --access-key <key>

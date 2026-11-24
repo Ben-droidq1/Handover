@@ -14,6 +14,9 @@ export const config = {
   kaneTimeoutSec: Math.max(30, Number(process.env.KANE_TIMEOUT_SEC || 180)),
   kaneMaxSteps: Math.max(5, Number(process.env.KANE_MAX_STEPS || 20)),
   kaneBin: process.env.KANE_BIN || '',
+  // Optional non-interactive login for headless hosts; see src/login.js.
+  kaneUsername: process.env.KANE_USERNAME || '',
+  kaneAccessKey: process.env.KANE_ACCESS_KEY || '',
   frontendDist: path.resolve(backendRoot, '../frontend/dist'),
   demoDir: path.resolve(backendRoot, 'demo-site'),
 }

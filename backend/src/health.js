@@ -130,6 +130,8 @@ export async function getHealth({ force = false } = {}) {
       maxSteps: config.kaneMaxSteps,
       maxCriteria: config.maxCriteria,
       ownerGate: Boolean(config.ownerPassword),
+      // True when the container can log Kane in by itself (no shell needed).
+      loginFromEnv: Boolean(config.kaneUsername && config.kaneAccessKey),
     },
     checkedAt: new Date().toISOString(),
   }
