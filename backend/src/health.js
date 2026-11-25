@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import { homedir } from 'node:os'
+import path from 'node:path'
 import { config } from './config.js'
 import { resolveKane } from './kane.js'
 
@@ -84,11 +85,69 @@ function probeChrome() {
   return { available: Boolean(found), path: found ?? null }
 }
 
+function readInstalledVersion(scriptPath) {
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(path.dirname(scriptPath), '..', 'package.json'), 'utf8'))
+    return typeof pkg.version === 'string' ? pkg.version : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Kane stores the login under $HOME, exactly like the CLI does.
+ *
+ * We deliberately read that instead of spawning `kane-cli whoami`: the CLI
+ * performs update checks on every start, which here takes 10-30s and made
+ * /api/health slow and flaky. A real run still proves the token works; this is
+ * just a fast, honest hint for the report/dashboard.
+ */
+function readStoredLogin() {
+  const root = path.join(homedir(), '.testmuai', 'kaneai', 'profiles')
+  let profiles = []
+  try {
+    profiles = fs.readdirSync(root, { withFileTypes: true }).filter((entry) => entry.isDirectory())
+  } catch {
+    return false
+  }
+
+  return profiles.some((profile) => {
+    const envRoot = path.join(root, profile.name)
+    let envs = []
+    try {
+      envs = fs.readdirSync(envRoot, { withFileTypes: true }).filter((entry) => entry.isDirectory())
+    } catch {
+      return false
+    }
+    return envs.some((env) => {
+      const dir = path.join(envRoot, env.name)
+      return ['credentials', 'basic-auth'].some((file) => fs.existsSync(path.join(dir, file)))
+    })
+  })
+}
+
 async function probeKane() {
   const kane = await resolveKane()
-  const shell = kane.mode === 'path' && process.platform === 'win32'
-  const version = await runText(kane.command, [...kane.prefix, '--version'], 20_000, shell)
 
+  // Normal installs resolve to the CLI's entry script, so the version can be
+  // read from disk instead of paying for a `--version` startup.
+  if (kane.mode === 'node') {
+    const version = readInstalledVersion(kane.prefix[0])
+    if (version) {
+      const loggedIn = readStoredLogin()
+      return {
+        available: true,
+        loggedIn,
+        version,
+        error: loggedIn ? null : 'Kane CLI has no stored login. Run "kane-cli login".',
+      }
+    }
+  }
+
+  // Custom KANE_BINs and unexpected layouts: ask the CLI itself. Runs only when
+  // the package layout above did not give us a version.
+  const shell = kane.mode === 'path' && process.platform === 'win32'
+  const version = await runText(kane.command, [...kane.prefix, '--version'], 30_000, shell)
   if (!version.ok) {
     return {
       available: false,
@@ -100,23 +159,23 @@ async function probeKane() {
     }
   }
 
-  const whoami = await runText(kane.command, [...kane.prefix, 'whoami'], 20_000, shell)
-  const whoamiText = `${whoami.out}${whoami.err}`
-  const loggedIn = whoami.ok && !/not logged in/i.test(whoamiText)
-
+  const loggedIn = readStoredLogin()
   return {
     available: true,
     loggedIn,
     version: version.out.trim().split(/\r?\n/).filter(Boolean).at(-1) ?? null,
-    error: loggedIn ? null : 'Kane CLI is installed but not logged in. Run "kane-cli login".',
+    error: loggedIn ? null : 'Kane CLI has no stored login. Run "kane-cli login".',
   }
 }
 
 let cached = null
 let cachedAt = 0
+// Each probe spawns the CLI twice, and the CLI's update checks can take 30s on a
+// slow link, so keep the answer around instead of paying that on every request.
+const CACHE_MS = 5 * 60_000
 
 export async function getHealth({ force = false } = {}) {
-  if (!force && cached && Date.now() - cachedAt < 20_000) return cached
+  if (!force && cached && Date.now() - cachedAt < CACHE_MS) return cached
 
   const [kane, chrome] = await Promise.all([probeKane(), Promise.resolve(probeChrome())])
 

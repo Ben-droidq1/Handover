@@ -103,6 +103,11 @@ const server = app.listen(config.port, () => {
       }
     })
     .catch((error) => console.warn(`[kane] login from env failed: ${error.message}`))
+    .finally(() => {
+      // Warm the health cache so the first request does not wait on two CLI
+      // startups (which can take 30s when update checks are slow).
+      getHealth().catch(() => {})
+    })
 })
 
 function shutdown(signal) {

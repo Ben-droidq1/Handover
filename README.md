@@ -142,11 +142,28 @@ first means the site is broken, the second means the environment is.
 ## Tests
 
 ```bash
-cd backend && npm test          # 29 tests: exit-code mapping, zip reader, validation
+cd backend && npm test          # 35 tests: exit-code mapping, zip reader, validation, env login
 cd frontend && npm run smoke    # renders every page in Node to catch crashes
 ```
 
 The backend tests never launch a browser, so they run on CI without Chrome or Kane credentials.
+
+### Live check
+
+`scripts/live-check.mjs` exercises a running instance the way the demo does:
+
+```bash
+# read-only: health, app shell, /r/<token>, demo pages
+node scripts/live-check.mjs --base http://localhost:3001
+
+# the whole client journey: create a project, run 3 criteria, download a
+# screenshot, and sign the public report off
+node scripts/live-check.mjs --base http://localhost:3001 --full
+```
+
+It exits non-zero on the first failed expectation, so it can gate a deploy. Add `--password` when
+`OWNER_PASSWORD` is set. A full run costs Kane credits and takes several minutes; the script prints
+each criterion's status while it polls.
 
 ## Docker
 
